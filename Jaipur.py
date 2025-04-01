@@ -96,6 +96,7 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
+        self.herd = []
 
     def __repr__(self):
         s = ''
@@ -109,6 +110,11 @@ class Player:
             hidden_hand += '[??] '
         return hidden_hand
 
+    def check_herd(self):
+        for i in range(len(self.hand))[::-1]:
+            if self.hand[i].card_type == Resource.CAMEL:
+                self.herd.append(self.hand.pop(i))
+
 
 class Board:
     def __init__(self, p1, p2, deck):
@@ -118,6 +124,8 @@ class Board:
         self.deck = deck
 
         self.shuffle_bonus_tokens()
+        self.p1.check_herd()
+        self.p2.check_herd()
 
     # noinspection PyMethodMayBeStatic
     def create_tokens(self):
@@ -160,6 +168,7 @@ class Board:
         for i in Resource.bonus_tokens():
             random.shuffle(self.tokens[i])
 
+
     def __repr__(self):
         s = ""
         blank_line = "|" + " " * 104 + "|" + "\n"
@@ -167,7 +176,7 @@ class Board:
         s += "+" + "-" * 104 + "+" + "\n"
         s += f'|{'Opponent hand: ' + self.p2.hide_hand():^104}|\n'
         s += blank_line
-        s += f'|{'Opponent herd: ' + '3':^104}|\n'
+        s += f'|{'Opponent herd: ' + str(len(self.p2.herd)) :^104}|\n'
         s += f'|{'Deck: ' + str(len(self.deck)):^104}|\n'
         s += blank_line
         for resource in Resource.normal_resources():
@@ -180,9 +189,9 @@ class Board:
             temp_s += f'| ({resource.value}) {self.print_tokens(resource)}'
             s += temp_s + ' ' * (105 - len(temp_s)) + '|\n'
         s += blank_line * 3
-        s += f'|{'Your herd: ' + '2':^104}|\n'
-        s += f'|{'Your hand: ' + str(self.p1):^104}|\n'
+        s += f'|{'Your herd: ' + str(len(self.p1.herd)) :^104}|\n'
         s += blank_line
+        s += f'|{'Your hand: ' + str(self.p1):^104}|\n'
         s += "+" + "-" * 104 + "+" + "\n"
         return s
 
@@ -190,11 +199,11 @@ class Board:
 deck = Deck()
 player1 = Player('Rocio')
 player2 = Player('Diego')
+deck.deal_cards(player1, 5)
+deck.deal_cards(player2, 5)
 board = Board(player1, player2, deck)
 
 print(deck)
 
-deck.deal_cards(player1, 5)
-deck.deal_cards(player2, 5)
 
 print(board)
