@@ -35,6 +35,8 @@ class Card:
 class Deck:
     def __init__(self):
         self.deck = []
+        for i in range(11):
+            self.deck.append(Card(Resource.CAMEL))
         for i in range(6):
             self.deck.append(Card(Resource.DIAMOND))
             self.deck.append(Card(Resource.GOLD))
@@ -44,9 +46,8 @@ class Deck:
             self.deck.append(Card(Resource.SPICES))
         for i in range(10):
             self.deck.append(Card(Resource.LEATHER))
-        for i in range(11):
-            self.deck.append(Card(Resource.CAMEL))
-        self.shuffle_cards()
+
+        # self.shuffle_cards()
 
     def __repr__(self):
         return str(self.deck)
@@ -97,6 +98,7 @@ class Player:
         self.name = name
         self.hand = []
         self.herd = []
+        self.token_pile = []
 
     def __repr__(self):
         s = ''
@@ -115,6 +117,45 @@ class Player:
             if self.hand[i].card_type == Resource.CAMEL:
                 self.herd.append(self.hand.pop(i))
 
+    def sell(self, board, type, amount):
+        total_from_type = 0
+        for i in self.hand:
+            if i.card_type == type:
+                total_from_type += 1
+
+        if amount > total_from_type:
+            raise ValueError("Trato de vender mas de lo que tenia")
+
+        if amount >= 0:
+            raise ValueError("No se puede vender menos de 1 !!!! boludo")
+
+        if amount > len(board.tokens[type]):
+            amount = len(board.tokens[type])
+
+        for i in range(amount):
+            self.token_pile.append(board.tokens[type].pop(0))
+
+        if amount == 3 and len(board.tokens[Resource.TOKENX3]) > 0:
+            self.token_pile.append(board.tokens[Resource.TOKENX3].pop(0))
+
+        elif amount == 4 and len(board.tokens[Resource.TOKENX4]) > 0:
+            self.token_pile.append(board.tokens[Resource.TOKENX4].pop(0))
+
+        elif amount >= 5 and len(board.tokens[Resource.TOKENX5]) > 0:
+            self.token_pile.append(board.tokens[Resource.TOKENX5].pop(0))
+
+        cards_sold = 0
+        for i in range(len(self.hand))[::-1]:
+            if self.hand[i].card_type == type and cards_sold != amount:
+                board.discard_pile.append(self.hand.pop(i))
+                cards_sold += 1
+
+    def print_token_pile(self):
+        s = ''
+        for i in self.token_pile:
+            s += f'{i.token_type.value} {i.value} '
+        return s
+
 
 class Board:
     def __init__(self, p1, p2, deck):
@@ -122,6 +163,8 @@ class Board:
         self.p1 = p1
         self.p2 = p2
         self.deck = deck
+        self.market = self.deck.deal_market()
+        self.discard_pile = []
 
         self.shuffle_bonus_tokens()
         self.p1.check_herd()
@@ -164,10 +207,15 @@ class Board:
             s += str(i) + ' '
         return s
 
+    def print_market(self):
+        s = ''
+        for i in self.market:
+            s += f"{i} "
+        return s
+
     def shuffle_bonus_tokens(self):
         for i in Resource.bonus_tokens():
             random.shuffle(self.tokens[i])
-
 
     def __repr__(self):
         s = ""
@@ -183,7 +231,7 @@ class Board:
             temp_s = ''
             temp_s += f'| ({resource.value}) {self.print_tokens(resource)}'
             s += temp_s + ' ' * (105 - len(temp_s)) + '|\n'
-        s += f'|{str(self.deck.deal_market()):^104}|\n'
+        s += f'|{self.print_market() :^104}|\n'
         for resource in Resource.bonus_tokens():
             temp_s = ''
             temp_s += f'| ({resource.value}) {self.print_tokens(resource)}'
@@ -205,5 +253,12 @@ board = Board(player1, player2, deck)
 
 print(deck)
 
+print(board.tokens)
 
 print(board)
+
+player1.sell(board, Resource.CAMEL, 0)
+
+print(board)
+print(board.discard_pile)
+print(player1.print_token_pile())
