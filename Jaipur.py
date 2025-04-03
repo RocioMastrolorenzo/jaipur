@@ -124,10 +124,10 @@ class Player:
                 total_from_type += 1
 
         if amount > total_from_type:
-            raise ValueError("Trato de vender mas de lo que tenia")
+            raise ValueError("No tenes suficientes cartas de este tipo")
 
         if amount >= 0:
-            raise ValueError("No se puede vender menos de 1 !!!! boludo")
+            raise ValueError("No se puede vender menos de 1")
 
         if amount > len(board.tokens[type]):
             amount = len(board.tokens[type])
@@ -149,6 +149,26 @@ class Player:
             if self.hand[i].card_type == type and cards_sold != amount:
                 board.discard_pile.append(self.hand.pop(i))
                 cards_sold += 1
+
+    def exchange(self, board, player_card_indices, market_card_indices):
+
+        if len(player_card_indices) != len(market_card_indices):
+            raise ValueError('Tenes que intercambiar la misma cantidad de cartas')
+        if len(market_card_indices) > len(self.hand + self.herd):
+            raise ValueError('No tenes suficientes cartas para intercambiar')
+        if len(player_card_indices) > len(board.market):
+            raise ValueError('No hay suficientes cartas en el mercado para intercambiar')
+        if player_card_indices.count(99) > len(self.herd):
+            raise ValueError('No tenes suficientes camellos')
+
+        for i in market_card_indices[::-1]:
+            self.hand.append(board.market.pop(i))
+        for i in player_card_indices[::-1]:
+            if i == 99:
+                board.market.append(self.herd.pop())
+            else:
+                board.market.append(self.hand.pop(i))
+
 
     def print_token_pile(self):
         s = ''
@@ -247,6 +267,7 @@ class Board:
 deck = Deck()
 player1 = Player('Rocio')
 player2 = Player('Diego')
+deck.shuffle_cards()
 deck.deal_cards(player1, 5)
 deck.deal_cards(player2, 5)
 board = Board(player1, player2, deck)
@@ -257,8 +278,8 @@ print(board.tokens)
 
 print(board)
 
-player1.sell(board, Resource.CAMEL, 0)
+player1.exchange(board,[0, 1, 2, 3, 4, 99], [0, 1, 2, 3, 4, 5])
 
 print(board)
-print(board.discard_pile)
-print(player1.print_token_pile())
+
+
