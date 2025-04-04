@@ -20,6 +20,10 @@ class Resource(Enum):
         return [cls.DIAMOND, cls.GOLD, cls.SILVER, cls.CLOTH, cls.SPICES, cls.LEATHER]
 
     @classmethod
+    def expensive_resources(cls):
+        return [cls.DIAMOND, cls.GOLD, cls.SILVER]
+
+    @classmethod
     def bonus_tokens(cls):
         return [cls.TOKENX3, cls.TOKENX4, cls.TOKENX5]
 
@@ -30,6 +34,14 @@ class Card:
 
     def __repr__(self):
         return f"[{self.card_type.value}]"
+
+    def __eq__(self, other):
+        if isinstance(other, Card):
+            return self.card_type == other.card_type
+        return False
+
+    def __hash__(self):
+        return hash(self.card_type)
 
 
 class Deck:
@@ -118,6 +130,7 @@ class Player:
                 self.herd.append(self.hand.pop(i))
 
     def sell(self, board, type, amount):
+
         total_from_type = 0
         for i in self.hand:
             if i.card_type == type:
@@ -126,14 +139,29 @@ class Player:
         if amount > total_from_type:
             raise ValueError("No tenes suficientes cartas de este tipo")
 
-        if amount >= 0:
+        if amount <= 0:
             raise ValueError("No se puede vender menos de 1")
 
+        if type in Resource.expensive_resources() and amount < 2:
+            raise ValueError("Tenes que vender al menos 2 cartas de este tipo")
+
+
+        #put sold cards on discard pile
+        cards_sold = 0
+        for i in range(len(self.hand))[::-1]:
+            if self.hand[i].card_type == type and cards_sold != amount:
+                board.discard_pile.append(self.hand.pop(i))
+                cards_sold += 1
+
+        # make amount equal to the amount of tokens left
         if amount > len(board.tokens[type]):
             amount = len(board.tokens[type])
 
+        #get resource tokens
         for i in range(amount):
             self.token_pile.append(board.tokens[type].pop(0))
+
+        #get bonus tokens
 
         if amount == 3 and len(board.tokens[Resource.TOKENX3]) > 0:
             self.token_pile.append(board.tokens[Resource.TOKENX3].pop(0))
@@ -144,14 +172,14 @@ class Player:
         elif amount >= 5 and len(board.tokens[Resource.TOKENX5]) > 0:
             self.token_pile.append(board.tokens[Resource.TOKENX5].pop(0))
 
-        cards_sold = 0
-        for i in range(len(self.hand))[::-1]:
-            if self.hand[i].card_type == type and cards_sold != amount:
-                board.discard_pile.append(self.hand.pop(i))
-                cards_sold += 1
 
     def exchange(self, board, player_card_indices, market_card_indices):
 
+        player_cards_ex = []
+        market_cards_ex = []
+
+        if len(player_card_indices) < 2:
+            raise ValueError('Necesitas intercambiar al menos dos cartas')
         if len(player_card_indices) != len(market_card_indices):
             raise ValueError('Tenes que intercambiar la misma cantidad de cartas')
         if len(market_card_indices) > len(self.hand + self.herd):
@@ -162,12 +190,21 @@ class Player:
             raise ValueError('No tenes suficientes camellos')
 
         for i in market_card_indices[::-1]:
-            self.hand.append(board.market.pop(i))
+            market_cards_ex.append(board.market.pop(i))
         for i in player_card_indices[::-1]:
             if i == 99:
-                board.market.append(self.herd.pop())
+                player_cards_ex.append(self.herd.pop())
             else:
-                board.market.append(self.hand.pop(i))
+                player_cards_ex.append(self.hand.pop(i))
+
+        if set(player_cards_ex).intersection(set(market_cards_ex)):
+            raise ValueError('No se puede cambiar por el mismo tipo de cartas')
+
+        for i in range(len(player_cards_ex)):
+            board.market.append(player_cards_ex.pop(0))
+
+        for i in range(len(market_card_indices)):
+            self.hand.append(market_cards_ex.pop(0))
 
 
     def print_token_pile(self):
@@ -264,22 +301,25 @@ class Board:
         return s
 
 
-deck = Deck()
-player1 = Player('Rocio')
-player2 = Player('Diego')
-deck.shuffle_cards()
-deck.deal_cards(player1, 5)
-deck.deal_cards(player2, 5)
-board = Board(player1, player2, deck)
+if __name__ == '__main__':
 
-print(deck)
 
-print(board.tokens)
+    deck = Deck()
+    player1 = Player('Rocio')
+    player2 = Player('Diego')
+    deck.shuffle_cards()
+    deck.deal_cards(player1, 5)
+    deck.deal_cards(player2, 5)
+    board = Board(player1, player2, deck)
 
-print(board)
+    print(deck)
 
-player1.exchange(board,[0, 1, 2, 3, 4, 99], [0, 1, 2, 3, 4, 5])
+    print(board.tokens)
 
-print(board)
+    print(board)
+
+    player1.exchange(board,[0, 1, 99], [0, 1, 2])
+
+    print(board)
 
 
