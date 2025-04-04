@@ -104,6 +104,13 @@ class Token:
         else:
             return '?'
 
+    def __eq__(self, other):
+        if isinstance(other, Token):
+            return self.token_type == other.token_type and self.value == other.value
+        return False
+
+    def __hash__(self):
+        return hash(self.token_type)
 
 class Player:
     def __init__(self, name):

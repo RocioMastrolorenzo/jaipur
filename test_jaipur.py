@@ -79,3 +79,12 @@ def test_sell_one_expensive_resource(game_objects):
     player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD)]
     with pytest.raises(ValueError, match="Tenes que vender al menos 2 cartas de este tipo"):
         player1.sell(board, Resource.GOLD, 1)
+
+def test_sell_happy(game_objects):
+    deck, board, player1, player2 = game_objects
+    player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES)]
+    board.tokens[Resource.TOKENX3] = [Token(Resource.TOKENX3, 2), Token(Resource.TOKENX3, 3)]
+    player1.sell(board, Resource.GOLD, 3)
+    assert player1.hand == [Card(Resource.SPICES)]
+    assert player1.token_pile == [Token(Resource.GOLD, 6), Token(Resource.GOLD, 6), Token(Resource.GOLD, 5), Token(Resource.TOKENX3, 2)]
+
