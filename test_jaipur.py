@@ -108,3 +108,36 @@ def test_sell_happy(game_objects):
     assert player1.hand == [Card(Resource.SPICES)]
     assert player1.token_pile == [Token(Resource.GOLD, 6), Token(Resource.GOLD, 6), Token(Resource.GOLD, 5),
                                   Token(Resource.TOKENX3, 2)]
+
+
+def test_take_one_resource_hand_too_big(game_objects):
+    deck, board, player1, player2 = game_objects
+    player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
+    with pytest.raises(ValueError, match='No podes agarrar más de siete cartas'):
+        player1.take_one_resource(board, 0)
+
+def test_take_one_resource_happy(game_objects):
+    deck, board, player1, player2 = game_objects
+    board.deck = [Card(Resource.LEATHER), Card(Resource.LEATHER)]
+    player1.hand = [Card(Resource.SPICES)]
+    board.market = [Card(Resource.CAMEL), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD),
+                    Card(Resource.SPICES)]
+    player1.take_one_resource(board, 2)
+    assert player1.hand == [Card(Resource.SPICES), Card(Resource.GOLD)]
+    assert board.market == [Card(Resource.CAMEL), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),
+                            Card(Resource.LEATHER)]
+
+def test_take_all_camels_happy(game_objects):
+    deck, board, player1, player2 = game_objects
+    board.market = [Card(Resource.SPICES), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.GOLD)]
+    board.deck = [Card(Resource.DIAMOND),Card(Resource.DIAMOND),Card(Resource.DIAMOND)]
+    player1.herd = [Card(Resource.CAMEL)]
+    player1.take_all_camels(board)
+    assert player1.herd == [Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL)]
+    assert board.market == [Card(Resource.SPICES), Card(Resource.GOLD), Card(Resource.DIAMOND),Card(Resource.DIAMOND),Card(Resource.DIAMOND)]
+
+def test_take_all_camels_no_camels_left(game_objects):
+    deck, board, player1, player2 = game_objects
+    board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.GOLD)]
+    with pytest.raises(ValueError, match='No hay camellos para agarrar'):
+        player1.take_all_camels(board)

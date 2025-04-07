@@ -1,3 +1,4 @@
+from Jaipur.card import Card
 from Jaipur.resource import Resource
 
 
@@ -100,9 +101,30 @@ class Player:
         for i in range(len(market_card_indices)):
             self.hand.append(market_cards_ex.pop(0))
 
+    def take_one_resource(self, board, card_index):
+        if len(self.hand) == 7:
+            raise ValueError('No podes agarrar más de siete cartas')
+
+        # take the card from the market and put it in the hand
+        self.hand.append(board.market.pop(card_index))
+
+        # put a new card from the deck on the market
+        board.market.append(board.deck.pop())
+
+    def take_all_camels(self, board):
+        camel_count = board.market.count(Card(Resource.CAMEL))
+        if camel_count == 0:
+            raise ValueError('No hay camellos para agarrar')
+
+        for i in range(len(board.market))[::-1]:
+            if board.market[i].card_type == Resource.CAMEL:
+                self.herd.append(board.market.pop(i))
+
+        for camel in range(camel_count):
+            board.market.append(board.deck.pop())
+
     def print_token_pile(self):
         s = ''
         for i in self.token_pile:
             s += f'{i.token_type.value} {i.value} '
         return s
-
