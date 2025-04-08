@@ -91,6 +91,14 @@ class Player:
         if player_card_indices.count(99) > len(self.herd):
             raise ValueError('No tenes suficientes camellos')
 
+        for i in player_card_indices:
+            if i >= len(self.hand + self.herd) and i != 99:
+                raise ValueError('')
+
+        for i in market_card_indices:
+            if i >= len(board.market) and i != 99:
+                raise ValueError('MAl')
+
         for i in market_card_indices[::-1]:
             market_cards_types.add(board.market[i])
         for i in player_card_indices[::-1]:
@@ -100,6 +108,7 @@ class Player:
                 player_cards_types.add(self.hand[i])
         if player_cards_types.intersection(market_cards_types):
             raise ValueError('No se puede cambiar por el mismo tipo de cartas')
+
 
 
         for i in market_card_indices[::-1]:

@@ -27,6 +27,48 @@ def choose_turn():
             print('Enter a valid action')
 
 
+def print_hand(player):
+    print_hand = ''
+
+    # adds the cards from the hand
+    for i in range(len(player.hand)):
+        print_hand += str(player.hand[i]) + ' '
+
+    print_hand += '| '
+
+    # adds the cards from the herd
+    for i in range(len(player.herd)):
+        print_hand += str(player.herd[i]) + ' '
+
+    print_hand += '\n'
+
+    # adds the index number on the bottom
+    for i in range(len(player.hand)):
+        print_hand += " " + str(i) + "   "
+
+    print_hand += '| '
+
+    for i in range(len(player.herd)):
+        print_hand += ' ' + str(i + len(player.hand)) + '  '
+
+    print(print_hand)
+
+
+def print_market(board):
+    print_market = ""
+
+    # adds the cards from the market
+    for i in range(len(board.market)):
+        print_market += str(board.market[i]) + ' '
+    print_market += '\n'
+
+    # adds the index number on the bottom
+    for i in range(len(board.market)):
+        print_market += " " + str(i) + "   "
+
+    print(print_market)
+
+
 def get_sell_input():
     user_amount = ""
     user_type = ""
@@ -61,67 +103,48 @@ def get_sell_input():
     return user_type, user_amount
 
 
-def get_exchange_input():
-    print_market = ""
-
-    # adds the cards from the market
-    for i in range(len(board.market)):
-        print_market += str(board.market[i]) + ' '
-    print_market += '\n'
-
-    # adds the index number on the bottom
-    for i in range(len(board.market)):
-        print_market += " " + str(i) + "   "
-
-    print(print_market)
+def get_exchange_input(board, player):
+    print_market(board)
 
     market_indices = input('choose the cards you want to exchange: (0-1-2) ').split('-')
     market_indices = list({int(i) for i in market_indices})
 
     # changes input to 99 if a camel was chosen
     for i in market_indices:
+        if i >= len(board.market):
+            raise ValueError(f"{i} no es un numero de carta valido")
         if board.market[i].card_type == Resource.CAMEL:
-            market_indices[i] = 99
+            raise ValueError("No se puede intercambiar con camellos")
+
 
     market_indices.sort()
 
-    print_hand = ''
-
-    # adds the cards from the hand
-    for i in range(len(player1.hand)):
-        print_hand += str(player1.hand[i]) + ' '
-
-    print_hand += '| '
-
-    # adds the cards from the herd
-    for i in range(len(player1.herd)):
-        print_hand += str(player1.herd[i]) + ' '
-
-    print_hand += '\n'
-
-    # adds the index number on the bottom
-    for i in range(len(player1.hand)):
-        print_hand += " " + str(i) + "   "
-
-    print_hand += '| '
-
-    for i in range(len(player1.herd)):
-        print_hand += ' ' + str(i + len(player1.hand)) + '  '
-
-    print(print_hand)
+    print_hand(player)
 
     player_indices = input(f'select {len(market_indices)} of your cards (0-1-2) ').split('-')
     player_indices = list({int(i) for i in player_indices})
     player_indices.sort()
 
-    # changes input to 99 if a camel was chosen
-    count = 0
     for i in player_indices:
-        if i >= len(player1.hand):
-            player_indices[count] = 99
-        count += 1
+        if i >= len(player.hand) + len(player.herd):
+            raise ValueError(f"{i} no es un numero de carta valido")
+
+    # changes input to 99 if a camel was chosen
+    for i in range(len(player_indices)):
+        if player_indices[i] >= len(player.hand):
+            player_indices[i] = 99
 
     return player_indices, market_indices
+
+
+def get_take_one_resource_input(board):
+    print(print_market(board))
+    card_index_user = int(input("Select the card to take "))
+
+    if card_index_user >= len(board.market):
+        raise ValueError(f"{card_index_user} no es un numero de carta valido")
+
+    return card_index_user
 
 
 if __name__ == '__main__':
@@ -146,10 +169,17 @@ if __name__ == '__main__':
                 continue
         elif chosen_turn == 2:  # exchange
             try:
-                player_indices, market_indices = get_exchange_input()
+                player_indices, market_indices = get_exchange_input(board, player1)
                 player1.exchange(board, player_indices, market_indices)
                 break
             except ValueError as e:
                 print(e)
                 continue
-        
+        elif chosen_turn == 3:  # take one
+            try:
+                card_index = get_take_one_resource_input(board)
+                player1.take_one_resource(card_index)
+                break
+            except ValueError as e:
+                print(e)
+                continue
