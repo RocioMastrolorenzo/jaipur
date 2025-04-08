@@ -1,3 +1,5 @@
+from logging import raiseExceptions
+
 from Jaipur.card import Card
 from Jaipur.resource import Resource
 
@@ -72,7 +74,8 @@ class Player:
 
         player_cards_ex = []
         market_cards_ex = []
-
+        if 99 in market_card_indices:
+            raise ValueError('No podes cambiar camellos')
         if len(player_card_indices) < 2:
             raise ValueError('Necesitas intercambiar al menos dos cartas')
         if len(player_card_indices) != len(market_card_indices):

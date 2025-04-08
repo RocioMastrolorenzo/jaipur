@@ -78,6 +78,12 @@ def test_exchange_one_card(game_objects):
     with pytest.raises(ValueError, match='Necesitas intercambiar al menos dos cartas'):
         player1.exchange(board, [0], [0, 1])
 
+def test_exchange_camels(game_objects):
+    deck, board, player1, player2 = game_objects
+    player1.hand = [Card(Resource.SPICES), Card(Resource.CLOTH), Card(Resource.CLOTH)]
+    board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.CAMEL)]
+    with pytest.raises(ValueError, match='No podes cambiar camellos'):
+        player1.exchange(board, [0, 2], [0, 99])
 
 def test_sell_not_enough_cards_from_type(game_objects):
     deck, board, player1, player2 = game_objects

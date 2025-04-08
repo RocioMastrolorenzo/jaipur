@@ -5,12 +5,12 @@ from Jaipur.resource import Resource
 
 
 def choose_turn():
-    #dictionary of valid words to input in addition to the corresponsing number
+    # dictionary of valid words to input in addition to the corresponsing number
     valid_inputs = {
         "1": 1, "sell": 1, "sell cards": 1,
         "2": 2, "exchange": 2, "exchange cards": 2,
         "3": 3, "take": 3, "take one": 3, "resource": 3, "take one resource": 3,
-        "4": 4, "camels": 4,"take camels" : 4, "take all camels": 4, "camel": 4
+        "4": 4, "camels": 4, "take camels": 4, "take all camels": 4, "camel": 4
     }
     while True:
         print()
@@ -22,9 +22,10 @@ def choose_turn():
                      ).strip().lower()
 
         if turn in valid_inputs:
-            return valid_inputs[turn] #returns an int
+            return valid_inputs[turn]  # returns an int
         else:
             print('Enter a valid action')
+
 
 def get_sell_input():
     user_amount = ""
@@ -57,8 +58,72 @@ def get_sell_input():
             print(e)
             continue
 
-
     return user_type, user_amount
+
+
+def get_exchange_input():
+    print_market = ""
+
+    # adds the cards from the market
+    for i in range(len(board.market)):
+        print_market += str(board.market[i]) + ' '
+    print_market += '\n'
+
+    # adds the index number on the bottom
+    for i in range(len(board.market)):
+        print_market += " " + str(i) + "   "
+
+    print(print_market)
+
+    market_indices = input('choose the cards you want to exchange: (0-1-2) ').split('-')
+    market_indices = [int(i) for i in market_indices]
+
+    # changes input to 99 if a camel was chosen
+    for i in market_indices:
+        if board.market[i].card_type == Resource.CAMEL:
+            market_indices[i] = 99
+
+    market_indices.sort()
+
+    print(market_indices)
+
+    print_hand = ''
+
+    # adds the cards from the hand
+    for i in range(len(player1.hand)):
+        print_hand += str(player1.hand[i]) + ' '
+
+    print_hand += '| '
+
+    # adds the cards from the herd
+    for i in range(len(player1.herd)):
+        print_hand += str(player1.herd[i]) + ' '
+
+    print_hand += '\n'
+
+    # adds the index number on the bottom
+    for i in range(len(player1.hand)):
+        print_hand += " " + str(i) + "   "
+
+    print_hand += '| '
+
+    for i in range(len(player1.herd)):
+        print_hand += ' ' + str(i + len(player1.hand)) + '  '
+
+    print(print_hand)
+
+    player_indices = input(f'select {len(market_indices)} of your cards (0-1-2) ').split('-')
+    player_indices = [int(i) for i in player_indices]
+    player_indices.sort()
+
+    # changes input to 99 if a camel was chosen
+    count = 0
+    for i in player_indices:
+        if i >= len(player1.hand):
+            player_indices[count] = 99
+        count += 1
+
+    return player_indices, market_indices
 
 if __name__ == '__main__':
     deck = Deck()
@@ -72,7 +137,7 @@ if __name__ == '__main__':
     print(board)
     while True:
         chosen_turn = choose_turn()
-        if chosen_turn == 1: #sell
+        if chosen_turn == 1:  # sell
             try:
                 user_type, user_amount = get_sell_input()
                 player1.sell(board, user_type, user_amount)
@@ -80,5 +145,11 @@ if __name__ == '__main__':
             except ValueError as e:
                 print(e)
                 continue
-        #elif
-
+        elif chosen_turn == 2:  # exchange
+            try:
+                player_indices, market_indices = get_exchange_input()
+                player1.exchange(board, player_indices, market_indices)
+                break
+            except ValueError as e:
+                print(e)
+                continue
