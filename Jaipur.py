@@ -44,7 +44,7 @@ def get_sell_input():
             user_amount = int(input('Enter amount to sell '))
             break
         except ValueError as e:
-            print(e)
+            print('Enter a valid amount')
             continue
     while True:
         try:
@@ -76,7 +76,7 @@ def get_exchange_input():
     print(print_market)
 
     market_indices = input('choose the cards you want to exchange: (0-1-2) ').split('-')
-    market_indices = [int(i) for i in market_indices]
+    market_indices = list({int(i) for i in market_indices})
 
     # changes input to 99 if a camel was chosen
     for i in market_indices:
@@ -84,8 +84,6 @@ def get_exchange_input():
             market_indices[i] = 99
 
     market_indices.sort()
-
-    print(market_indices)
 
     print_hand = ''
 
@@ -113,7 +111,7 @@ def get_exchange_input():
     print(print_hand)
 
     player_indices = input(f'select {len(market_indices)} of your cards (0-1-2) ').split('-')
-    player_indices = [int(i) for i in player_indices]
+    player_indices = list({int(i) for i in player_indices})
     player_indices.sort()
 
     # changes input to 99 if a camel was chosen
@@ -124,6 +122,7 @@ def get_exchange_input():
         count += 1
 
     return player_indices, market_indices
+
 
 if __name__ == '__main__':
     deck = Deck()
@@ -153,3 +152,4 @@ if __name__ == '__main__':
             except ValueError as e:
                 print(e)
                 continue
+        

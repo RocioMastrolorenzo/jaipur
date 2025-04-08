@@ -6,6 +6,8 @@ from Jaipur.token import Token
 
 class Board:
     def __init__(self, p1, p2, deck):
+        self.align_offset = 30
+
         self.tokens = self.create_tokens()
         self.p1 = p1
         self.p2 = p2
@@ -66,26 +68,26 @@ class Board:
 
     def __repr__(self):
         s = ""
-        blank_line = "|" + " " * 104 + "|" + "\n"
+        blank_line = " " * 104  + "\n"
 
         s += "+" + "-" * 104 + "+" + "\n"
-        s += f'|{'Opponent hand: ' + self.p2.hide_hand():^104}|\n'
+        s += f'{" " * self.align_offset}{'Opponent hand: ' + self.p2.hide_hand()}\n'
         s += blank_line
-        s += f'|{'Opponent herd: ' + str(len(self.p2.herd)) :^104}|\n'
-        s += f'|{'Deck: ' + str(len(self.deck)):^104}|\n'
+        s += f'{'Opponent herd: ' + str(len(self.p2.herd)) :^104}\n'
+        s += f'{'Deck: ' + str(len(self.deck)):^104}\n'
         s += blank_line
         for resource in Resource.normal_resources():
             temp_s = ''
-            temp_s += f'| ({resource.value}) {self.print_tokens(resource)}'
-            s += temp_s + ' ' * (105 - len(temp_s)) + '|\n'
-        s += f'|{self.print_market() :^104}|\n'
+            temp_s += f' ({resource.value}) {self.print_tokens(resource)}'
+            s += temp_s + ' ' * (105 - len(temp_s)) + '\n'
+        s += f'{" " * (self.align_offset+10)}{self.print_market()}\n'
         for resource in Resource.bonus_tokens():
             temp_s = ''
-            temp_s += f'| ({resource.value}) {self.print_tokens(resource)}'
-            s += temp_s + ' ' * (105 - len(temp_s)) + '|\n'
+            temp_s += f' ({resource.value}) {self.print_tokens(resource)}'
+            s += temp_s + ' ' * (105 - len(temp_s)) + '\n'
         s += blank_line * 3
-        s += f'|{'Your herd: ' + str(len(self.p1.herd)) :^104}|\n'
+        s += f'{'Your herd: ' + str(len(self.p1.herd)) :^104}\n'
         s += blank_line
-        s += f'|{'Your hand: ' + str(self.p1):^104}|\n'
+        s += f'{" " * self.align_offset}{'Your hand: ' + str(self.p1)}\n'
         s += "+" + "-" * 104 + "+" + "\n"
         return s

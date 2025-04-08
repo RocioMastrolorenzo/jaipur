@@ -74,6 +74,10 @@ class Player:
 
         player_cards_ex = []
         market_cards_ex = []
+
+        player_cards_types = set()
+        market_cards_types = set()
+
         if 99 in market_card_indices:
             raise ValueError('No podes cambiar camellos')
         if len(player_card_indices) < 2:
@@ -88,6 +92,17 @@ class Player:
             raise ValueError('No tenes suficientes camellos')
 
         for i in market_card_indices[::-1]:
+            market_cards_types.add(board.market[i])
+        for i in player_card_indices[::-1]:
+            if i == 99:
+                player_cards_types.add(self.herd[0])
+            else:
+                player_cards_types.add(self.hand[i])
+        if player_cards_types.intersection(market_cards_types):
+            raise ValueError('No se puede cambiar por el mismo tipo de cartas')
+
+
+        for i in market_card_indices[::-1]:
             market_cards_ex.append(board.market.pop(i))
         for i in player_card_indices[::-1]:
             if i == 99:
@@ -95,8 +110,6 @@ class Player:
             else:
                 player_cards_ex.append(self.hand.pop(i))
 
-        if set(player_cards_ex).intersection(set(market_cards_ex)):
-            raise ValueError('No se puede cambiar por el mismo tipo de cartas')
 
         for i in range(len(player_cards_ex)):
             board.market.append(player_cards_ex.pop(0))
