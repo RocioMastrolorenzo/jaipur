@@ -105,30 +105,39 @@ def get_sell_input():
 
 
 def get_exchange_input(board, player):
-    print_market(board)
-
-    market_indices = input('choose the cards you want to exchange: (0-1-2) ').split('-')
-    market_indices = list({int(i) for i in market_indices})
+    market_indices = ""
+    while True:
+        try:
+            print_market(board)
+            market_indices = input('choose the cards you want to exchange: (0-1-2) ').split('-')
+            market_indices = list({int(i) for i in market_indices})
+            break
+        except ValueError:
+            print(f"Choose a valid card number.")
+            continue
 
     # changes input to 99 if a camel was chosen
     for i in market_indices:
         if i >= len(board.market):
-            raise ValueError(f"{i} no es un numero de carta valido")
+            raise ValueError(f"{i} is not a valid card number.")
         if board.market[i].card_type == Resource.CAMEL:
             raise ValueError("No se puede intercambiar con camellos")
-
-
     market_indices.sort()
 
-    print_hand(player)
-
-    player_indices = input(f'select {len(market_indices)} of your cards (0-1-2) ').split('-')
-    player_indices = list({int(i) for i in player_indices})
+    player_indices = ""
+    while True:
+        try:
+            print_hand(player)
+            player_indices = input(f'select {len(market_indices)} of your cards (0-1-2) ').split('-')
+            player_indices = list({int(i) for i in player_indices})
+            break
+        except ValueError:
+            print(f"Choose a valid card number.")
+            continue
     player_indices.sort()
-
     for i in player_indices:
         if i >= len(player.hand) + len(player.herd):
-            raise ValueError(f"{i} no es un numero de carta valido")
+            raise ValueError(f"{i} is not a valid card number.")
 
     # changes input to 99 if a camel was chosen
     for i in range(len(player_indices)):
@@ -139,11 +148,20 @@ def get_exchange_input(board, player):
 
 
 def get_take_one_resource_input(board):
-    print_market(board)
-    card_index_user = int(input("Select the card to take "))
-
+    card_index_user = ""
+    while True:
+        try:
+            print_market(board)
+            card_index_user = int(input("Select the card to take "))
+            break
+        except ValueError:
+            print(f"Choose a valid card number.")
+            continue
     if card_index_user >= len(board.market):
-        raise ValueError(f"{card_index_user} no es un numero de carta valido")
+        raise ValueError(f"{card_index_user} is not a valid card number.")
+
+    if board.market[card_index_user].card_type == Resource.CAMEL:
+        raise ValueError("You can't take a single camel")
 
     return card_index_user
 

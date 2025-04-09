@@ -81,6 +81,8 @@ class Board:
         s += blank_line
         s += f'{'Opponent herd: ' + str(len(self.p2.herd)) :^104}\n'
         s += f'{'Deck: ' + str(len(self.deck)):^104}\n'
+        s += f'{"Tokens: " + str(len(self.p2.token_pile)):>104}\n'
+        s += f'{"Current points: " + str(self.p2.count_tokens_no_bonus()):>104}\n'
         s += blank_line
         for resource in Resource.normal_resources():
             temp_s = ''
@@ -91,7 +93,9 @@ class Board:
             temp_s = ''
             temp_s += f' ({resource.value}) {self.print_tokens(resource)}'
             s += temp_s + ' ' * (105 - len(temp_s)) + '\n'
-        s += blank_line * 3
+        s += blank_line
+        s += f'{"Tokens: " + str(len(self.p1.token_pile)):>104}\n'
+        s += f'{"Current points: " + str(self.p1.count_tokens_no_bonus()):>104}\n'
         s += f'{'Your herd: ' + str(len(self.p1.herd)) :^104}\n'
         s += blank_line
         s += f'{" " * self.align_offset}{'Your hand: ' + str(self.p1)}\n'

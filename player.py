@@ -10,6 +10,7 @@ class Player:
         self.hand = []
         self.herd = []
         self.token_pile = []
+        self.token_tally = 0
 
     def __repr__(self):
         s = ''
@@ -150,3 +151,10 @@ class Player:
         for i in self.token_pile:
             s += f'{i.token_type.value} {i.value} '
         return s
+
+    def count_tokens_no_bonus(self):
+        tally = 0
+        for i in self.token_pile:
+            if i.token_type not in Resource.bonus_tokens():
+                tally += i.value
+        return tally
