@@ -17,6 +17,9 @@ class Player:
             s += str(i) + ' '
         return s
 
+    def deal_hand(self, deck):
+        self.hand.extend(deck.deal_cards(5))
+
     def hide_hand(self):
         hidden_hand = ''
         for i in range(len(self.hand)):
@@ -133,9 +136,6 @@ class Player:
         # take the card from the market and put it in the hand
         self.hand.append(board.market.pop(card_index))
 
-        # put a new card from the deck on the market
-        board.market.append(board.deck.pop())
-
     def take_all_camels(self, board):
         camel_count = board.market.count(Card(Resource.CAMEL))
         if camel_count == 0:
@@ -144,9 +144,6 @@ class Player:
         for i in range(len(board.market))[::-1]:
             if board.market[i].card_type == Resource.CAMEL:
                 self.herd.append(board.market.pop(i))
-
-        for camel in range(camel_count):
-            board.market.append(board.deck.pop())
 
     def print_token_pile(self):
         s = ''

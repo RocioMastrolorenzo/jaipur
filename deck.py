@@ -19,7 +19,6 @@ class Deck:
         for i in range(10):
             self.deck.append(Card(Resource.LEATHER))
 
-        # self.shuffle_cards()
 
     def __repr__(self):
         return str(self.deck)
@@ -31,12 +30,11 @@ class Deck:
         random.shuffle(self.deck)
         return self
 
-    def deal_cards(self, player, amount):
-        for i in range(amount):
-            player.hand.append(self.deck.pop())
-        return player.hand
+    def deal_cards(self, amount):
+        cards = [self.deck.pop() for i in range(amount)]
+        return cards
 
-    def deal_market(self):
+    def deal_market_setup(self):
         market = []
         total_camels = 0
         total_resources = 0
@@ -51,3 +49,4 @@ class Deck:
             else:
                 self.deck.insert(0, c)
         return market
+

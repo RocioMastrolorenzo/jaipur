@@ -4,6 +4,7 @@ from Jaipur.player import Player
 from Jaipur.resource import Resource
 
 
+
 def choose_turn():
     # dictionary of valid words to input in addition to the corresponsing number
     valid_inputs = {
@@ -138,7 +139,7 @@ def get_exchange_input(board, player):
 
 
 def get_take_one_resource_input(board):
-    print(print_market(board))
+    print_market(board)
     card_index_user = int(input("Select the card to take "))
 
     if card_index_user >= len(board.market):
@@ -152,8 +153,8 @@ if __name__ == '__main__':
     player1 = Player('Rocio')
     player2 = Player('Diego')
     deck.shuffle_cards()
-    deck.deal_cards(player1, 5)
-    deck.deal_cards(player2, 5)
+    player1.deal_hand(deck)
+    player2.deal_hand(deck)
     board = Board(player1, player2, deck)
 
     print(board)
@@ -178,8 +179,17 @@ if __name__ == '__main__':
         elif chosen_turn == 3:  # take one
             try:
                 card_index = get_take_one_resource_input(board)
-                player1.take_one_resource(card_index)
+                player1.take_one_resource(board, card_index)
                 break
             except ValueError as e:
                 print(e)
                 continue
+        elif chosen_turn == 4: #take all camels
+            try:
+                player1.take_all_camels(board)
+                break
+            except ValueError as e:
+                print(e)
+                continue
+    board.fill_market()
+    print(board)

@@ -12,7 +12,7 @@ class Board:
         self.p1 = p1
         self.p2 = p2
         self.deck = deck
-        self.market = self.deck.deal_market()
+        self.market = self.deck.deal_market_setup()
         self.discard_pile = []
 
         self.shuffle_bonus_tokens()
@@ -65,6 +65,12 @@ class Board:
     def shuffle_bonus_tokens(self):
         for i in Resource.bonus_tokens():
             random.shuffle(self.tokens[i])
+
+    def fill_market(self):
+        fill_amount = 5 - len(self.market)
+        if len(self.market) < 5:
+            self.market.extend(self.deck.deal_cards(fill_amount))
+
 
     def __repr__(self):
         s = ""
