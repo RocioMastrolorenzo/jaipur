@@ -25,7 +25,7 @@ def choose_turn():
         if turn in valid_inputs:
             return valid_inputs[turn]  # returns an int
         else:
-            print('Enter a valid action')
+            print("Enter a valid action")
 
 
 def print_hand(player):
@@ -84,19 +84,19 @@ def get_sell_input():
     }
     while True:
         try:
-            user_amount = int(input('Enter amount to sell '))
+            user_amount = int(input("Enter amount to sell "))
             break
         except ValueError as e:
-            print('Enter a valid amount')
+            print("Enter a valid amount")
             continue
     while True:
         try:
-            user_type_input = input('Enter type of resource to sell ')
+            user_type_input = input("Enter type of resource to sell ")
             if user_type_input in valid_inputs:
                 user_type = valid_inputs[user_type_input]
                 break
             if user_type_input not in valid_inputs:
-                raise ValueError('Enter a valid type of resource')
+                raise ValueError("Enter a valid type of resource")
         except ValueError as e:
             print(e)
             continue
@@ -109,26 +109,25 @@ def get_exchange_input(board, player):
     while True:
         try:
             print_market(board)
-            market_indices = input('choose the cards you want to exchange: (0-1-2) ').split('-')
+            market_indices = input("choose the cards you want to exchange: (0-1-2) ").split("-")
             market_indices = list({int(i) for i in market_indices})
             break
         except ValueError:
             print(f"Choose a valid card number.")
             continue
 
-    # changes input to 99 if a camel was chosen
     for i in market_indices:
         if i >= len(board.market):
             raise ValueError(f"{i} is not a valid card number.")
         if board.market[i].card_type == Resource.CAMEL:
-            raise ValueError("No se puede intercambiar con camellos")
+            raise ValueError("You can't exchange camels")
     market_indices.sort()
 
     player_indices = ""
     while True:
         try:
             print_hand(player)
-            player_indices = input(f'select {len(market_indices)} of your cards (0-1-2) ').split('-')
+            player_indices = input(f"select {len(market_indices)} of your cards (0-1-2) ").split("-")
             player_indices = list({int(i) for i in player_indices})
             break
         except ValueError:
@@ -168,8 +167,8 @@ def get_take_one_resource_input(board):
 
 if __name__ == '__main__':
     deck = Deck()
-    player1 = Player('Rocio')
-    player2 = Player('Diego')
+    player1 = Player("Rocio")
+    player2 = Player("Diego")
     deck.shuffle_cards()
     player1.deal_hand(deck)
     player2.deal_hand(deck)

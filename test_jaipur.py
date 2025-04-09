@@ -21,21 +21,21 @@ def test_exchange_not_enough_camels(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
     player1.herd = []
-    with pytest.raises(ValueError, match='No tenes suficientes camellos'):
+    with pytest.raises(ValueError, match="You don't have enough camels"):
         player1.exchange(board, [0, 99, 99], [0, 1, 2])
 
 
 def test_exchange_not_equal_amount(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
-    with pytest.raises(ValueError, match='Tenes que intercambiar la misma cantidad de cartas'):
+    with pytest.raises(ValueError, match="You must exchange the same amount of cards"):
         player1.exchange(board, [0, 1, 2], [0, 1, 2, 3])
 
 
 def test_exchange_not_enough_player_cards(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
-    with pytest.raises(ValueError, match='No tenes suficientes cartas para intercambiar'):
+    with pytest.raises(ValueError, match="You don't have enough cards to exchange"):
         player1.exchange(board, [0, 1, 2, 3], [0, 1, 2, 3])
 
 
@@ -43,7 +43,7 @@ def test_exchange_not_enough_market_cards(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
     board.market = [Card(Resource.SPICES), Card(Resource.SPICES)]
-    with pytest.raises(ValueError, match='No hay suficientes cartas en el mercado para intercambiar'):
+    with pytest.raises(ValueError, match="There's not enough cards on the market to exchange"):
         player1.exchange(board, [0, 1, 2], [0, 1, 2])
 
 
@@ -66,7 +66,7 @@ def test_exchange_same_goods(game_objects):
     board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES),
                     Card(Resource.SPICES)]
 
-    with pytest.raises(ValueError, match='No se puede cambiar por el mismo tipo de cartas'):
+    with pytest.raises(ValueError, match="You can't exchange the same type of card"):
         player1.exchange(board, [0, 1], [0, 1])
 
 
@@ -75,34 +75,34 @@ def test_exchange_one_card(game_objects):
     player1.hand = [Card(Resource.SPICES), Card(Resource.CLOTH), Card(Resource.CLOTH)]
     board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES),
                     Card(Resource.SPICES)]
-    with pytest.raises(ValueError, match='Necesitas intercambiar al menos dos cartas'):
+    with pytest.raises(ValueError, match="You must exchange at least two cards"):
         player1.exchange(board, [0], [0, 1])
 
 def test_exchange_camels(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.CLOTH), Card(Resource.CLOTH)]
     board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.CAMEL)]
-    with pytest.raises(ValueError, match='No podes cambiar camellos'):
+    with pytest.raises(ValueError, match="You can't exchange camels"):
         player1.exchange(board, [0, 2], [0, 99])
 
 def test_sell_not_enough_cards_from_type(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.CLOTH), Card(Resource.CLOTH)]
-    with pytest.raises(ValueError, match='No tenes suficientes cartas de este tipo'):
+    with pytest.raises(ValueError, match="You don't have enough cards of this type"):
         player1.sell(board, Resource.LEATHER, 2)
 
 
 def test_sell_zero_cards(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.CLOTH), Card(Resource.CLOTH)]
-    with pytest.raises(ValueError, match='No se puede vender menos de 1'):
+    with pytest.raises(ValueError, match="You can't sell less than one card"):
         player1.sell(board, Resource.SPICES, 0)
 
 
 def test_sell_one_expensive_resource(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD)]
-    with pytest.raises(ValueError, match="Tenes que vender al menos 2 cartas de este tipo"):
+    with pytest.raises(ValueError, match="You must sell at least two cards of this type"):
         player1.sell(board, Resource.GOLD, 1)
 
 
@@ -119,31 +119,28 @@ def test_sell_happy(game_objects):
 def test_take_one_resource_hand_too_big(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
-    with pytest.raises(ValueError, match='No podes agarrar más de siete cartas'):
+    with pytest.raises(ValueError, match="You can't have more than seven cards in your hand"):
         player1.take_one_resource(board, 0)
 
 def test_take_one_resource_happy(game_objects):
     deck, board, player1, player2 = game_objects
-    board.deck = [Card(Resource.LEATHER), Card(Resource.LEATHER)]
     player1.hand = [Card(Resource.SPICES)]
     board.market = [Card(Resource.CAMEL), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD),
                     Card(Resource.SPICES)]
     player1.take_one_resource(board, 2)
     assert player1.hand == [Card(Resource.SPICES), Card(Resource.GOLD)]
-    assert board.market == [Card(Resource.CAMEL), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),
-                            Card(Resource.LEATHER)]
+    assert board.market == [Card(Resource.CAMEL), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES)]
 
 def test_take_all_camels_happy(game_objects):
     deck, board, player1, player2 = game_objects
     board.market = [Card(Resource.SPICES), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.GOLD)]
-    board.deck = [Card(Resource.DIAMOND),Card(Resource.DIAMOND),Card(Resource.DIAMOND)]
     player1.herd = [Card(Resource.CAMEL)]
     player1.take_all_camels(board)
     assert player1.herd == [Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL)]
-    assert board.market == [Card(Resource.SPICES), Card(Resource.GOLD), Card(Resource.DIAMOND),Card(Resource.DIAMOND),Card(Resource.DIAMOND)]
+    assert board.market == [Card(Resource.SPICES), Card(Resource.GOLD)]
 
 def test_take_all_camels_no_camels_left(game_objects):
     deck, board, player1, player2 = game_objects
     board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.GOLD)]
-    with pytest.raises(ValueError, match='No hay camellos para agarrar'):
+    with pytest.raises(ValueError, match="There's no camels to take"):
         player1.take_all_camels(board)

@@ -40,13 +40,13 @@ class Player:
                 total_from_type += 1
 
         if amount > total_from_type:
-            raise ValueError("No tenes suficientes cartas de este tipo")
+            raise ValueError("You don't have enough cards of this type")
 
         if amount <= 0:
-            raise ValueError("No se puede vender menos de 1")
+            raise ValueError("You can't sell less than one card")
 
         if type in Resource.expensive_resources() and amount < 2:
-            raise ValueError("Tenes que vender al menos 2 cartas de este tipo")
+            raise ValueError("You must sell at least two cards of this type")
 
         # put sold cards on discard pile
         cards_sold = 0
@@ -83,25 +83,17 @@ class Player:
         market_cards_types = set()
 
         if 99 in market_card_indices:
-            raise ValueError('No podes cambiar camellos')
+            raise ValueError("You can't exchange camels")
         if len(player_card_indices) < 2:
-            raise ValueError('Necesitas intercambiar al menos dos cartas')
+            raise ValueError("You must exchange at least two cards")
         if len(player_card_indices) != len(market_card_indices):
-            raise ValueError('Tenes que intercambiar la misma cantidad de cartas')
+            raise ValueError("You must exchange the same amount of cards")
         if len(market_card_indices) > len(self.hand + self.herd):
-            raise ValueError('No tenes suficientes cartas para intercambiar')
+            raise ValueError("You don't have enough cards to exchange")
         if len(player_card_indices) > len(board.market):
-            raise ValueError('No hay suficientes cartas en el mercado para intercambiar')
+            raise ValueError("There's not enough cards on the market to exchange")
         if player_card_indices.count(99) > len(self.herd):
-            raise ValueError('No tenes suficientes camellos')
-
-        for i in player_card_indices:
-            if i >= len(self.hand + self.herd) and i != 99:
-                raise ValueError('')
-
-        for i in market_card_indices:
-            if i >= len(board.market) and i != 99:
-                raise ValueError('MAl')
+            raise ValueError("You don't have enough camels")
 
         for i in market_card_indices[::-1]:
             market_cards_types.add(board.market[i])
@@ -111,7 +103,7 @@ class Player:
             else:
                 player_cards_types.add(self.hand[i])
         if player_cards_types.intersection(market_cards_types):
-            raise ValueError('No se puede cambiar por el mismo tipo de cartas')
+            raise ValueError("You can't exchange the same type of card")
 
 
 
@@ -132,7 +124,7 @@ class Player:
 
     def take_one_resource(self, board, card_index):
         if len(self.hand) == 7:
-            raise ValueError('No podes agarrar más de siete cartas')
+            raise ValueError("You can't have more than seven cards in your hand")
 
         # take the card from the market and put it in the hand
         self.hand.append(board.market.pop(card_index))
@@ -140,7 +132,7 @@ class Player:
     def take_all_camels(self, board):
         camel_count = board.market.count(Card(Resource.CAMEL))
         if camel_count == 0:
-            raise ValueError('No hay camellos para agarrar')
+            raise ValueError("There's no camels to take")
 
         for i in range(len(board.market))[::-1]:
             if board.market[i].card_type == Resource.CAMEL:
