@@ -4,7 +4,6 @@ from Jaipur.player import Player
 from Jaipur.resource import Resource
 
 
-
 def choose_turn():
     # dictionary of valid words to input in addition to the corresponsing number
     valid_inputs = {
@@ -165,30 +164,23 @@ def get_take_one_resource_input(board):
     return card_index_user
 
 
-if __name__ == '__main__':
-    deck = Deck()
-    player1 = Player("Rocio")
-    player2 = Player("Diego")
-    deck.shuffle_cards()
-    player1.deal_hand(deck)
-    player2.deal_hand(deck)
-    board = Board(player1, player2, deck)
-
+def turn(player):
     print(board)
+    print(f"{player.name}'s turn: \n")
     while True:
         chosen_turn = choose_turn()
         if chosen_turn == 1:  # sell
             try:
                 user_type, user_amount = get_sell_input()
-                player1.sell(board, user_type, user_amount)
+                player.sell(board, user_type, user_amount)
                 break
             except ValueError as e:
                 print(e)
                 continue
         elif chosen_turn == 2:  # exchange
             try:
-                player_indices, market_indices = get_exchange_input(board, player1)
-                player1.exchange(board, player_indices, market_indices)
+                player_indices, market_indices = get_exchange_input(board, player)
+                player.exchange(board, player_indices, market_indices)
                 break
             except ValueError as e:
                 print(e)
@@ -196,17 +188,36 @@ if __name__ == '__main__':
         elif chosen_turn == 3:  # take one
             try:
                 card_index = get_take_one_resource_input(board)
-                player1.take_one_resource(board, card_index)
+                player.take_one_resource(board, card_index)
                 break
             except ValueError as e:
                 print(e)
                 continue
-        elif chosen_turn == 4: #take all camels
+        elif chosen_turn == 4:  # take all camels
             try:
-                player1.take_all_camels(board)
+                player.take_all_camels(board)
                 break
             except ValueError as e:
                 print(e)
                 continue
     board.fill_market()
-    print(board)
+    board.switch_players()
+
+
+if __name__ == '__main__':
+    # initial setup
+    deck = Deck()
+    player1_name = input("Enter the name of the first player: ")
+    player2_name = input("Enter the name of the second player: ")
+    player1 = Player(player1_name)
+    player2 = Player(player2_name)
+    deck.shuffle_cards()
+    player1.deal_hand(deck)
+    player2.deal_hand(deck)
+    board = Board(player1, player2, deck)
+
+    # turns
+    turn(board.current_player)
+    turn(board.current_player)
+    turn(board.current_player)
+

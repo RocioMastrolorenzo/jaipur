@@ -11,6 +11,7 @@ class Player:
         self.herd = []
         self.token_pile = []
         self.token_tally = 0
+        self.score = 0
 
     def __repr__(self):
         s = ''

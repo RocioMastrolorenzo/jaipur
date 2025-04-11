@@ -14,6 +14,8 @@ class Board:
         self.deck = deck
         self.market = self.deck.deal_market_setup()
         self.discard_pile = []
+        self.current_player = p1
+        self.other_player = p2
 
         self.shuffle_bonus_tokens()
         self.p1.check_herd()
@@ -71,18 +73,22 @@ class Board:
         if len(self.market) < 5:
             self.market.extend(self.deck.deal_cards(fill_amount))
 
+    def switch_players(self):
+        temp = self.current_player
+        self.current_player = self.other_player
+        self.other_player = temp
 
     def __repr__(self):
         s = ""
         blank_line = " " * 104  + "\n"
 
         s += "+" + "-" * 104 + "+" + "\n"
-        s += f'{" " * self.align_offset}{'Opponent hand: ' + self.p2.hide_hand()}\n'
+        s += f'{" " * self.align_offset}{'Opponent hand: ' + self.other_player.hide_hand()}\n'
         s += blank_line
-        s += f'{'Opponent herd: ' + str(len(self.p2.herd)) :^104}\n'
+        s += f'{'Opponent herd: ' + str(len(self.other_player.herd)) :^104}\n'
         s += f'{'Deck: ' + str(len(self.deck)):^104}\n'
-        s += f'{"Tokens: " + str(len(self.p2.token_pile)):>104}\n'
-        s += f'{"Current points: " + str(self.p2.count_tokens_no_bonus()):>104}\n'
+        s += f'{"Tokens: " + str(len(self.other_player.token_pile)):>104}\n'
+        s += f'{"Current points: " + str(self.other_player.count_tokens_no_bonus()):>104}\n'
         s += blank_line
         for resource in Resource.normal_resources():
             temp_s = ''
@@ -94,10 +100,10 @@ class Board:
             temp_s += f' ({resource.value}) {self.print_tokens(resource)}'
             s += temp_s + ' ' * (105 - len(temp_s)) + '\n'
         s += blank_line
-        s += f'{"Tokens: " + str(len(self.p1.token_pile)):>104}\n'
-        s += f'{"Current points: " + str(self.p1.count_tokens_no_bonus()):>104}\n'
-        s += f'{'Your herd: ' + str(len(self.p1.herd)) :^104}\n'
+        s += f'{"Tokens: " + str(len(self.current_player.token_pile)):>104}\n'
+        s += f'{"Current points: " + str(self.current_player.count_tokens_no_bonus()):>104}\n'
+        s += f'{'Your herd: ' + str(len(self.current_player.herd)) :^104}\n'
         s += blank_line
-        s += f'{" " * self.align_offset}{'Your hand: ' + str(self.p1)}\n'
+        s += f'{" " * self.align_offset}{'Your hand: ' + str(self.current_player)}\n'
         s += "+" + "-" * 104 + "+" + "\n"
         return s
