@@ -203,12 +203,13 @@ def turn(player):
     board.fill_market()
     board.switch_players()
 
-
 if __name__ == '__main__':
     # initial setup
     deck = Deck()
-    player1_name = input("Enter the name of the first player: ")
-    player2_name = input("Enter the name of the second player: ")
+    #player1_name = input("Enter the name of the first player: ")
+    #player2_name = input("Enter the name of the second player: ")
+    player1_name = "a"
+    player2_name = "b"
     player1 = Player(player1_name)
     player2 = Player(player2_name)
     deck.shuffle_cards()
@@ -216,8 +217,16 @@ if __name__ == '__main__':
     player2.deal_hand(deck)
     board = Board(player1, player2, deck)
 
-    # turns
-    turn(board.current_player)
-    turn(board.current_player)
-    turn(board.current_player)
+    '''
+    while not round_end_check():
+        turn(board.current_player)
+
+    print("listo")
+    '''
+
+    print(board.tokens)
+
+
+
+
 

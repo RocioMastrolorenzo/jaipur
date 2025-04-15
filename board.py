@@ -1,7 +1,7 @@
 import random
 
 from Jaipur.resource import Resource
-from Jaipur.token import Token
+from Jaipur.gametoken import GameToken
 
 
 class Board:
@@ -48,7 +48,7 @@ class Board:
 
         for resource_type in token_mapping:
             for value in token_mapping[resource_type]:
-                tokens[resource_type].append(Token(resource_type, value))
+                tokens[resource_type].append(GameToken(resource_type, value))
 
         return tokens
 
@@ -78,6 +78,17 @@ class Board:
         self.current_player = self.other_player
         self.other_player = temp
 
+    def round_end_check(self):
+        empty_token_pile = 0
+        for i in self.tokens:
+            if len(self.tokens[i]) == 0 and i in Resource.normal_resources():
+                empty_token_pile += 1
+        if empty_token_pile >= 3:
+            return True
+        elif len(self.deck) == 0 and len(self.market) < 5:
+            return True
+        else:
+            return False
     def __repr__(self):
         s = ""
         blank_line = " " * 104  + "\n"

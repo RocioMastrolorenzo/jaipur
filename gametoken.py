@@ -1,7 +1,7 @@
 from Jaipur.resource import Resource
 
 
-class Token:
+class GameToken:
     def __init__(self, token_type, value):
         self.token_type = token_type
         self.value = value
@@ -13,7 +13,7 @@ class Token:
             return '?'
 
     def __eq__(self, other):
-        if isinstance(other, Token):
+        if isinstance(other, GameToken):
             return self.token_type == other.token_type and self.value == other.value
         return False
 
