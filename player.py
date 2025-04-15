@@ -151,3 +151,8 @@ class Player:
             if i.token_type not in Resource.bonus_tokens():
                 tally += i.value
         return tally
+
+    def count_points(self):
+        round_score = 0
+        for i in self.token_pile:
+            round_score += i.value

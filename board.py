@@ -1,5 +1,6 @@
 import random
 
+from Jaipur.player import Player
 from Jaipur.resource import Resource
 from Jaipur.gametoken import GameToken
 
@@ -9,8 +10,8 @@ class Board:
         self.align_offset = 30
 
         self.tokens = self.create_tokens()
-        self.p1 = p1
-        self.p2 = p2
+        self.p1: Player = p1
+        self.p2: Player = p2
         self.deck = deck
         self.market = self.deck.deal_market_setup()
         self.discard_pile = []
@@ -33,7 +34,9 @@ class Board:
             Resource.TOKENX5: [10, 10, 9, 8, 8],
             Resource.TOKENX4: [6, 6, 5, 5, 4, 4],
             Resource.TOKENX3: [3, 3, 2, 2, 2, 1, 1],
+            Resource.CAMEL: [5],
         }
+
         tokens = {
             Resource.DIAMOND: [],
             Resource.GOLD: [],
@@ -44,11 +47,13 @@ class Board:
             Resource.TOKENX5: [],
             Resource.TOKENX4: [],
             Resource.TOKENX3: [],
+            Resource.CAMEL: [],
         }
 
-        for resource_type in token_mapping:
-            for value in token_mapping[resource_type]:
-                tokens[resource_type].append(GameToken(resource_type, value))
+        for i in token_mapping:
+            for j in token_mapping[i]:
+                tokens[i].append(GameToken(i, j))
+
 
         return tokens
 
@@ -89,6 +94,14 @@ class Board:
             return True
         else:
             return False
+
+    def give_camel_token(self):
+        if len(self.p1.herd) > len(self.p2.herd):
+            self.p1.token_pile.append(self.tokens[Resource.CAMEL].pop())
+        elif len(self.p1.herd) < len(self.p2.herd):
+            self.p2.token_pile.append(self.tokens[Resource.CAMEL].pop())
+
+
     def __repr__(self):
         s = ""
         blank_line = " " * 104  + "\n"
