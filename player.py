@@ -1,17 +1,18 @@
 from logging import raiseExceptions
 
 from Jaipur.card import Card
+from Jaipur.gametoken import GameToken
 from Jaipur.resource import Resource
 
 
 class Player:
     def __init__(self, name):
-        self.name = name
-        self.hand = []
-        self.herd = []
-        self.token_pile = []
-        self.token_tally = 0
-        self.score = 0
+        self.name: str = name
+        self.hand: list[Card] = []
+        self.herd: list[Card] = []
+        self.token_pile: list[GameToken] = []
+        self.token_tally: int = 0
+        self.score: int = 0
 
     def __repr__(self):
         s = ''

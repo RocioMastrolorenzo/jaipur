@@ -3,8 +3,8 @@ from Jaipur.resource import Resource
 
 class GameToken:
     def __init__(self, token_type, value):
-        self.token_type = token_type
-        self.value = value
+        self.token_type: Resource = token_type
+        self.value: int = value
 
     def __repr__(self):
         if self.token_type in Resource.normal_resources():

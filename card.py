@@ -1,6 +1,8 @@
+from Jaipur.resource import Resource
+
 class Card:
     def __init__(self, card_type):
-        self.card_type = card_type
+        self.card_type: Resource = card_type
 
     def __repr__(self):
         return f"[{self.card_type.value}]"

@@ -218,6 +218,7 @@ if __name__ == '__main__':
     board = Board(player1, player2, deck)
 
     while not board.round_end_check():
+        board.current_player.sort_hand()
         print(board)
         print(f"{board.current_player.name}'s turn: \n")
         turn(board.current_player)

@@ -6,7 +6,7 @@ from Jaipur.resource import Resource
 
 class Deck:
     def __init__(self):
-        self.deck = []
+        self.deck: list[Card] = []
         for i in range(11):
             self.deck.append(Card(Resource.CAMEL))
         for i in range(6):

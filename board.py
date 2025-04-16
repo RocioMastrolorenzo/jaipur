@@ -1,5 +1,7 @@
 import random
 
+from Jaipur.card import Card
+from Jaipur.deck import Deck
 from Jaipur.player import Player
 from Jaipur.resource import Resource
 from Jaipur.gametoken import GameToken
@@ -9,14 +11,14 @@ class Board:
     def __init__(self, p1, p2, deck):
         self.align_offset = 30
 
-        self.tokens = self.create_tokens()
+        self.tokens: dict[Resource, list[GameToken]] = self.create_tokens()
         self.p1: Player = p1
         self.p2: Player = p2
-        self.deck = deck
-        self.market = self.deck.deal_market_setup()
-        self.discard_pile = []
-        self.current_player = p1
-        self.other_player = p2
+        self.deck: Deck = deck
+        self.market: list[Card] = self.deck.deal_market_setup()
+        self.discard_pile: list[Card] = []
+        self.current_player: Player = p1
+        self.other_player: Player = p2
 
         self.shuffle_bonus_tokens()
         self.p1.check_herd()
