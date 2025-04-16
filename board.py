@@ -96,11 +96,17 @@ class Board:
             return False
 
     def give_camel_token(self):
-        if len(self.p1.herd) > len(self.p2.herd):
-            self.p1.token_pile.append(self.tokens[Resource.CAMEL].pop())
-        elif len(self.p1.herd) < len(self.p2.herd):
-            self.p2.token_pile.append(self.tokens[Resource.CAMEL].pop())
+        if len(self.p1.herd) != len(self.p2.herd):
+            winner = max([self.p1, self.p2], key=lambda p: len(p.herd))
+            winner.token_pile.append(self.tokens[Resource.CAMEL].pop())
 
+    def give_point(self):
+        if self.p1.count_points() != self.p2.count_points():
+            winner = max([self.p1, self.p2], key=lambda p: p.count_points())
+            winner.score += 1
+        else:
+            winner = "No one"
+        return f"player 1: {self.p1.count_points()} player 2: {self.p2.count_points()} \n {winner} wins!"
 
     def __repr__(self):
         s = ""

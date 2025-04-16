@@ -156,3 +156,4 @@ class Player:
         round_score = 0
         for i in self.token_pile:
             round_score += i.value
+        return round_score

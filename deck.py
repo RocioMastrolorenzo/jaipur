@@ -43,7 +43,7 @@ class Deck:
             if c.card_type == Resource.CAMEL and total_camels < 3:
                 market.insert(0, c)
                 total_camels += 1
-            if c.card_type != Resource.CAMEL and total_resources < 2:
+            elif c.card_type != Resource.CAMEL and total_resources < 2:
                 market.append(c)
                 total_resources += 1
             else:

@@ -1,3 +1,5 @@
+import sys
+
 from Jaipur.board import Board
 from Jaipur.deck import Deck
 from Jaipur.player import Player
@@ -165,8 +167,6 @@ def get_take_one_resource_input(board):
 
 
 def turn(player):
-    print(board)
-    print(f"{player.name}'s turn: \n")
     while True:
         chosen_turn = choose_turn()
         if chosen_turn == 1:  # sell
@@ -200,10 +200,10 @@ def turn(player):
             except ValueError as e:
                 print(e)
                 continue
-    board.fill_market()
-    board.switch_players()
+
 
 if __name__ == '__main__':
+
     # initial setup
     deck = Deck()
     #player1_name = input("Enter the name of the first player: ")
@@ -217,16 +217,15 @@ if __name__ == '__main__':
     player2.deal_hand(deck)
     board = Board(player1, player2, deck)
 
-    '''
-    while not round_end_check():
+
+    while not board.round_end_check():
+        print(board)
+        print(f"{board.current_player.name}'s turn: \n")
         turn(board.current_player)
-
-    print("listo")
-    '''
-
-    print(board.tokens)
-
-
+        board.fill_market()
+        board.switch_players()
+    board.give_camel_token()
+    board.give_point()
 
 
 
