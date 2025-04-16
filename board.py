@@ -54,7 +54,6 @@ class Board:
             for j in token_mapping[i]:
                 tokens[i].append(GameToken(i, j))
 
-
         return tokens
 
     def print_tokens(self, resource_type):
@@ -110,7 +109,7 @@ class Board:
 
     def __repr__(self):
         s = ""
-        blank_line = " " * 104  + "\n"
+        blank_line = " " * 104 + "\n"
 
         s += "+" + "-" * 104 + "+" + "\n"
         s += f'{" " * self.align_offset}{'Opponent hand: ' + self.other_player.hide_hand()}\n'
@@ -124,7 +123,7 @@ class Board:
             temp_s = ''
             temp_s += f' ({resource.value}) {self.print_tokens(resource)}'
             s += temp_s + ' ' * (105 - len(temp_s)) + '\n'
-        s += f'{" " * (self.align_offset+10)}{self.print_market()}\n'
+        s += f'{" " * (self.align_offset + 10)}{self.print_market()}\n'
         for resource in Resource.bonus_tokens():
             temp_s = ''
             temp_s += f' ({resource.value}) {self.print_tokens(resource)}'

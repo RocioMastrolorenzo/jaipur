@@ -19,7 +19,6 @@ class Deck:
         for i in range(10):
             self.deck.append(Card(Resource.LEATHER))
 
-
     def __repr__(self):
         return str(self.deck)
 
@@ -49,4 +48,3 @@ class Deck:
             else:
                 self.deck.insert(0, c)
         return market
-

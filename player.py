@@ -106,8 +106,6 @@ class Player:
         if player_cards_types.intersection(market_cards_types):
             raise ValueError("You can't exchange the same type of card")
 
-
-
         for i in market_card_indices[::-1]:
             market_cards_ex.append(board.market.pop(i))
         for i in player_card_indices[::-1]:
@@ -115,7 +113,6 @@ class Player:
                 player_cards_ex.append(self.herd.pop())
             else:
                 player_cards_ex.append(self.hand.pop(i))
-
 
         for i in range(len(player_cards_ex)):
             board.market.append(player_cards_ex.pop(0))
@@ -157,3 +154,6 @@ class Player:
         for i in self.token_pile:
             round_score += i.value
         return round_score
+
+    def sort_hand(self):
+        self.hand.sort(key=lambda card: card.card_type)

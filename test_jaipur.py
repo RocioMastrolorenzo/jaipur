@@ -78,12 +78,14 @@ def test_exchange_one_card(game_objects):
     with pytest.raises(ValueError, match="You must exchange at least two cards"):
         player1.exchange(board, [0], [0, 1])
 
+
 def test_exchange_camels(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.CLOTH), Card(Resource.CLOTH)]
     board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.CAMEL)]
     with pytest.raises(ValueError, match="You can't exchange camels"):
         player1.exchange(board, [0, 2], [0, 99])
+
 
 def test_sell_not_enough_cards_from_type(game_objects):
     deck, board, player1, player2 = game_objects
@@ -118,9 +120,11 @@ def test_sell_happy(game_objects):
 
 def test_take_one_resource_hand_too_big(game_objects):
     deck, board, player1, player2 = game_objects
-    player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
+    player1.hand = [Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),
+                    Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
     with pytest.raises(ValueError, match="You can't have more than seven cards in your hand"):
         player1.take_one_resource(board, 0)
+
 
 def test_take_one_resource_happy(game_objects):
     deck, board, player1, player2 = game_objects
@@ -131,19 +135,24 @@ def test_take_one_resource_happy(game_objects):
     assert player1.hand == [Card(Resource.SPICES), Card(Resource.GOLD)]
     assert board.market == [Card(Resource.CAMEL), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES)]
 
+
 def test_take_all_camels_happy(game_objects):
     deck, board, player1, player2 = game_objects
-    board.market = [Card(Resource.SPICES), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.GOLD)]
+    board.market = [Card(Resource.SPICES), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL),
+                    Card(Resource.GOLD)]
     player1.herd = [Card(Resource.CAMEL)]
     player1.take_all_camels(board)
     assert player1.herd == [Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL)]
     assert board.market == [Card(Resource.SPICES), Card(Resource.GOLD)]
 
+
 def test_take_all_camels_no_camels_left(game_objects):
     deck, board, player1, player2 = game_objects
-    board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.GOLD)]
+    board.market = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES),
+                    Card(Resource.GOLD)]
     with pytest.raises(ValueError, match="There's no camels to take"):
         player1.take_all_camels(board)
+
 
 def test_round_end_no_cards_left_happy(game_objects):
     deck, board, player1, player2 = game_objects
@@ -153,27 +162,43 @@ def test_round_end_no_cards_left_happy(game_objects):
     player1.take_one_resource(board, 4)
     assert board.round_end_check() == True
 
+
 def test_round_end_take_camels_with_empty_deck(game_objects):
     deck, board, player1, player2 = game_objects
-    board.market = [Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL)]
+    board.market = [Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL), Card(Resource.CAMEL),
+                    Card(Resource.CAMEL)]
     deck.deck = []
     player1.take_all_camels(board)
     assert board.round_end_check() == True
 
+
 def test_round_end_exchange_no_cards_left(game_objects):
     deck, board, player1, player2 = game_objects
     player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES)]
-    board.market = [Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH)]
+    board.market = [Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH),
+                    Card(Resource.CLOTH)]
     deck.deck = []
-    player1.exchange(board, [0,1],[0,1])
+    player1.exchange(board, [0, 1], [0, 1])
     assert board.round_end_check() == False
-    assert board.market == [Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.SPICES), Card(Resource.SPICES)]
+    assert board.market == [Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.SPICES),
+                            Card(Resource.SPICES)]
+
 
 def test_round_end_sell_with_empty_deck(game_objects):
     deck, board, player1, player2 = game_objects
     board.market = [Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH), Card(Resource.CLOTH),
                     Card(Resource.CLOTH)]
-    player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.GOLD)]
+    player1.hand = [Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.SPICES),
+                    Card(Resource.GOLD)]
     deck.deck = []
     player1.sell(board, Resource.SPICES, 4)
     assert board.round_end_check() == False
+
+
+def test_sort_hand(game_objects):
+    deck, board, player1, player2 = game_objects
+    player1.hand = [Card(Resource.GOLD), Card(Resource.DIAMOND), Card(Resource.GOLD), Card(Resource.SPICES),
+                    Card(Resource.SPICES), Card(Resource.LEATHER), Card(Resource.SPICES)]
+    player1.sort_hand()
+    assert player1.hand == [Card(Resource.DIAMOND), Card(Resource.GOLD), Card(Resource.GOLD), Card(Resource.SPICES),
+                            Card(Resource.SPICES), Card(Resource.SPICES), Card(Resource.LEATHER)]

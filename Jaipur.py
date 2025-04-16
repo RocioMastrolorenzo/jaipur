@@ -128,7 +128,7 @@ def get_exchange_input(board, player):
     while True:
         try:
             print_hand(player)
-            player_indices = input(f"select {len(market_indices)} of your cards (0-1-2) ").split("-")
+            player_indices = input(f"select {len(market_indices)} of your cards separated by spaces: ").split(" ")
             player_indices = list({int(i) for i in player_indices})
             break
         except ValueError:
@@ -206,8 +206,8 @@ if __name__ == '__main__':
 
     # initial setup
     deck = Deck()
-    #player1_name = input("Enter the name of the first player: ")
-    #player2_name = input("Enter the name of the second player: ")
+    # player1_name = input("Enter the name of the first player: ")
+    # player2_name = input("Enter the name of the second player: ")
     player1_name = "a"
     player2_name = "b"
     player1 = Player(player1_name)
@@ -217,7 +217,6 @@ if __name__ == '__main__':
     player2.deal_hand(deck)
     board = Board(player1, player2, deck)
 
-
     while not board.round_end_check():
         print(board)
         print(f"{board.current_player.name}'s turn: \n")
@@ -226,6 +225,3 @@ if __name__ == '__main__':
         board.switch_players()
     board.give_camel_token()
     board.give_point()
-
-
-
